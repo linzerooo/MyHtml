@@ -6,33 +6,25 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MyHttp.Configuration;
 using MyHttp;
+using System.Net.Sockets;
+using MyHtml.Configuration;
 
-const string filePath = @".\appsettings.json";
+
+
+const string staticFolderPath = @"C:\Users\79991\RiderProjects\MyHttp\MyHttp\static";
 HttpListener server = new HttpListener();
-Appsetting config = new Appsetting();
-// установка адресов прослушки
 
-try
-{
-    if (!File.Exists(filePath))
-    {
-        Console.WriteLine("apssettings.jcon не существует");
-        throw new Exception();
-    }
+Appsetting? config = new Configurationcs().GetConfigurationcs();
 
-    using (var stream = File.OpenRead(filePath))
-    {
-        config = JsonSerializer.Deserialize<Appsetting>(stream);
-    }
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-}
-finally
-{
-    Console.WriteLine("работа завершена");
-}
+
+// Определим нужное максимальное количество потоков
+// Пусть будет по 4 на каждый процессор
+int MaxThreadsCount = Environment.ProcessorCount * 4;
+// Установим максимальное количество рабочих потоков
+ThreadPool.SetMaxThreads(MaxThreadsCount, MaxThreadsCount);
+// Установим минимальное количество рабочих потоков
+ThreadPool.SetMinThreads(2, 2); 
+
 
 server.Prefixes.Add($"{config.Address}:{config.Port}/");
 
@@ -45,13 +37,11 @@ if (responseText == null)
     Console.WriteLine("html файла не существует");
     if (config.StaticFilePath == null)
     {
-        folderHandler.CreateFolder("C:\\Users\\79991\\RiderProjects\\MyHttp\\MyHttp\\static");
+        folderHandler.CreateFolder(staticFolderPath);
     }
 }
 
-
 server.Start(); // начинаем прослушивать входящие подключения
-
 
 await Console.Out.WriteLineAsync("Start пошёл");
 // получаем контекст
@@ -77,3 +67,8 @@ using (Stream output = response.OutputStream)
     Console.WriteLine("Запрос обработан");
 }
 server.Stop();
+
+static void Main(string[] args)
+{
+
+}
