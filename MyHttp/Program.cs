@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MyHttp.Configuration;
+using MyHttp;
 
 const string filePath = @".\appsettings.json";
 HttpListener server = new HttpListener();
@@ -35,6 +36,20 @@ finally
 
 server.Prefixes.Add($"{config.Address}:{config.Port}/");
 
+FolderHandler folderHandler = new FolderHandler();
+
+var responseText = folderHandler.GetHtml(config.StaticFilePath);
+
+if (responseText == null)
+{
+    Console.WriteLine("html файла не существует");
+    if (config.StaticFilePath == null)
+    {
+        folderHandler.CreateFolder("C:\\Users\\79991\\RiderProjects\\MyHttp\\MyHttp\\static");
+    }
+}
+
+
 server.Start(); // начинаем прослушивать входящие подключения
 
 
@@ -44,8 +59,6 @@ var context = await server.GetContextAsync();
 
 var response = context.Response;
 // отправляемый в ответ код htmlвозвращает
-string responseText =
-    @"C:\Users\lin\web\cv-main\google\google.html";
 
 using (StreamReader stream = new StreamReader(responseText))
 {
