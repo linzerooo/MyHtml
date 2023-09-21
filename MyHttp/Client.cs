@@ -1,28 +1,33 @@
 ﻿// Класс-обработчик клиента
+using HTTPServer;
 using MyHtml.Configuration;
 using MyHttp;
 using MyHttp.Configuration;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 class Client
 {
-    public Appsetting? config = new Configurationcs().GetConfigurationcs();
+    public static Appsetting? config = Configurationcs.GetConfigurationcs();
+
+    //FolderHandler folderHandler = new FolderHandler();
+
+    public string? responseText = FolderHandler.GetHtml(config.StaticFilePath);
+
     // Конструктор класса. Ему нужно передавать принятого клиента от TcpListener
-    public Client(TcpClient Client)
+    public Client()
     {
-        FolderHandler folderHandler = new FolderHandler();
-        // Код простой HTML-странички
-        string? Html = folderHandler.GetHtml(config.StaticFilePath);
+        //// Код простой HTML-странички
 
-        // Приведем строку к виду массива байт
+        //// Приведем строку к виду массива байт
 
-        byte[] Buffer = Encoding.UTF8.GetBytes(Html);
+        //using (StreamReader stream = new StreamReader(responseText))
+        //{
+        //    responseText = stream.ReadToEnd();
+        //}
 
-        // Отправим его клиенту
-        Client.GetStream().Write(Buffer, 0, Buffer.Length);
-        // Закроем соединение
-        Client.Close();
+        //byte[] buffer = Encoding.UTF8.GetBytes(responseText);
     }
-    
+
 }   

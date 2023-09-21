@@ -11,9 +11,9 @@ namespace MyHtml.Configuration
     public class Configurationcs
     {
         const string jsonPath = @".\appsettings.json";
-        Appsetting config = new Appsetting();
-        public Appsetting? GetConfigurationcs()
+        public static Appsetting? GetConfigurationcs()
         {
+            Appsetting config = new Appsetting();
             try
             {
                 if (!File.Exists(jsonPath))

@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
+using System.Net;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Xml.Schema;
+using HTTPServer;
+using MyHtml.Configuration;
 
 namespace MyHttp
 {
-    public class FolderHandler
+    public static class FolderHandler
     {
-        public bool FolderIsExist(string path)
+        public static bool FolderIsExist(string path)
         {
             bool folderExist = File.Exists(path);
             if (folderExist)
@@ -17,13 +23,21 @@ namespace MyHttp
             }
             return false;
         }
-        public void CreateFolder(string path)
+        public static void CreateFolder(string path)
         {
             Directory.CreateDirectory(path);
         }
-        public string? GetHtml(string path) 
-        { 
-            return Directory.GetFiles(path, "google.html", SearchOption.AllDirectories).FirstOrDefault();
+
+        public static string? GetHtml(string path) 
+        {
+            if (File.Exists(path + "google.html"))
+            {
+                return path + "google.html";
+            }
+            else
+            {
+                return path + "404.html";
+            }            
         }
     }
 }
