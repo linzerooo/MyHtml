@@ -16,12 +16,7 @@ namespace MyHttp
     {
         public static bool FolderIsExist(string path)
         {
-            bool folderExist = File.Exists(path);
-            if (folderExist)
-            {
-                return true;
-            }
-            return false;
+            return File.Exists(path);
         }
         public static void CreateFolder(string path)
         {

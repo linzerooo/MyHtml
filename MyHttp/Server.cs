@@ -1,4 +1,5 @@
 ﻿using MyHtml.Configuration;
+using MyHttp;
 using MyHttp.Configuration;
 using System;
 using System.Collections.Generic;
@@ -29,9 +30,18 @@ namespace HTTPServer
 
             context = listener.GetContext();
 
+
+            var requestUrl = context.Request.Url;
+
             response = context.Response;
 
-            var responseText = new Client().responseText;
+            if (!FolderHandler.FolderIsExist(config.StaticFilePath))
+            {
+                FolderHandler.CreateFolder(config.StaticFilePath);
+            }
+
+            var responseText = FolderHandler.GetHtml(config.StaticFilePath);
+
 
             using (StreamReader stream = new StreamReader(responseText))
             {
@@ -49,21 +59,8 @@ namespace HTTPServer
 
                 Console.WriteLine("Запрос обработан");
             }
-
-
-            // В бесконечном цикле
-            //while (true)
-            //{
-            //    // Принимаем новых клиентов. После того, как клиент был принят,
-            //    // он передается в новый поток (ClientThread)
-            //    // с использованием пула потоков.
-            //    ThreadPool.QueueUserWorkItem(new WaitCallback(ClientThread), listener.GetContext()); //listener.AcceptTcpClient());
-            //}
         }
-        //static void ClientThread(Object StateInfo)
-        //{
-        //    new Client((TcpClient)StateInfo);
-        //}
+
         ~Server()
         {
             if (listener != null)
@@ -71,21 +68,7 @@ namespace HTTPServer
                 listener.Stop();
             }
         }
-        //public async void SendError404()
-        //{
-        //    string error = @"C:\Users\79991\RiderProjects\MyHttp\MyHttp\static\404.html";
-        //    using (StreamReader stream = new StreamReader(error))
-        //    {
-        //        error = stream.ReadToEnd();
-        //    }
-        //    byte[] buffer = Encoding.UTF8.GetBytes(error);
 
-        //    using (Stream output = response.OutputStream)
-        //    {
-        //        await output.WriteAsync(buffer, 0, buffer.Length);
-        //        await output.FlushAsync();            
-        //    }
-        //}
 
     }
 }
