@@ -24,7 +24,34 @@ namespace MyHtml.Configuration
 
                 using (var stream = File.OpenRead(jsonPath))
                 {
-                    config = JsonSerializer.Deserialize<Appsetting>(stream);                
+                    config = JsonSerializer.Deserialize<Appsetting>(stream);
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                Console.WriteLine("работа завершена");
+            }
+            return config;
+        }
+        public static EmailISenderService? GetEmailConfig()
+        {
+            EmailISenderService config = new EmailISenderService();
+            try
+            {
+                if (!File.Exists(jsonPath))
+                {
+                    Console.WriteLine("apssettings.jcon не существует");
+                    throw new Exception();
+                }
+
+                using (var stream = File.OpenRead(jsonPath))
+                {
+                    config = JsonSerializer.Deserialize<EmailISenderService>(stream);
                 }
             }
             catch (Exception e)
