@@ -34,7 +34,7 @@ namespace MyHtml.Configuration
             }
             finally
             {
-                Console.WriteLine("работа завершена");
+                Console.WriteLine("работа ");
             }
             return config;
         }
@@ -60,7 +60,7 @@ namespace MyHtml.Configuration
             }
             finally
             {
-                Console.WriteLine("работа завершена");
+                Console.WriteLine("работа ");
             }
             return config;
         }

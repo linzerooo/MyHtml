@@ -12,7 +12,7 @@ using MyHtml.Configuration;
 
 namespace MyHttp
 {
-    public static class FolderHandler
+    public static class FilesHandler
     {
         public static bool FolderIsExist(string path)
         {
@@ -27,7 +27,7 @@ namespace MyHttp
         {
             if (File.Exists(path + "google.html"))
             {
-                return path + "google.html";
+                return path + "index.html";
             }
             else
             {
