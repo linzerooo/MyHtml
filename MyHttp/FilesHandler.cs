@@ -31,7 +31,7 @@ namespace MyHttp
             }
             else
             {
-                return path + "404.html";
+                return path + "index.html";
             }            
         }
     }
